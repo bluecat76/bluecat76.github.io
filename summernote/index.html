@@ -6,6 +6,7 @@
    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
    <link rel="stylesheet" href="dist/summernote.css">
+   <link rel="stylesheet" href="dist/plugin/databasic/summernote-ext-databasic.css">
    <title>summernote test site</title>
 </head>
 <body>
@@ -19,14 +20,42 @@
       <p>Dolore aut id quo. Magni libero et sunt numquam assumenda animi molestiae. Et omnis assumenda eligendi voluptatibus esse. Earum et libero ea eius omnis ipsam aut exercitationem.</p>
       <p>And see <a href="https://summernote.org">SUMMERNOTE</a> for details.
     </div>
+    
+    <footer>
+      <button class="edit-on">ON</button>
+      <button class="edit-off">OFF</button>
+    </footer>
+    <!--
+    -->
   </div>
 
   <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <script src="dist/summernote.js"></script>
+  <script src="dist/plugin/databasic/summernote-ext-databasic.js"></script>
   <script>
     (function($, window) {
-      $("#editor").summernote();
+      $(document).ready(function() {
+    
+        $("#editor").summernote({
+          toolbar: [
+              // [groupName, [list of button]]
+              ['style', ['style']],
+              ['font1', ['bold', 'italic', 'clear']],
+              ['font2', ['strikethrough', 'superscript', 'subscript']],
+              ['para', ['hr', 'ul', 'ol', 'paragraph', 'quote']],
+              ['insert', ['link', 'picture', 'video', 'databasic']],
+              ['table', ['table']],
+              ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+      
+        $(".edit-on").click(function() { $("#editor").summernote(); });
+        $(".edit-off").click(function() { $("#editor").summernote('destroy'); });
+
+      });
+/*      
+*/
     }(jQuery, this));
   </script>
 </body>
