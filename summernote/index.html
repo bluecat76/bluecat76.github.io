@@ -8,13 +8,24 @@
    <title>summernote test site</title>
 </head>
 <body>
+
   <div class="container">
-    <h4> <i class="note-icon-summernote"></i> Summernote
-      <span class="label label-info">Bootstrap v3.3.5</span>
-      <span class="label label-success">with Summernote Icons</span>
-    </h4>
-    <div class="summernote"><p>Hello World</p></div>
+    <h1>Editor test page</h1>
+    <h4><i class="note-icon-summernote"></i> Summernote</h4>
+    <div id="editor">
+      <h2>Hello World</h2>
+      <p>Qui ipsam porro optio illum earum harum. A quia sunt dicta veritatis vero quam sed. Quia neque veniam incidunt in. Magnam blanditiis voluptatem quae eius nihil nam. Necessitatibus aperiam dolorem nihil ducimus ut.</p>
+      <p>Dolore aut id quo. Magni libero et sunt numquam assumenda animi molestiae. Et omnis assumenda eligendi voluptatibus esse. Earum et libero ea eius omnis ipsam aut exercitationem.</p>
+      <p>And see <a href="https://summernote.org">SUMMERNOTE</a> for details.
+    </div>
   </div>
+
+  <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
   <script src="dist/summernote.js"></script>
+  <script>
+    (function($, window) {
+      $("#editor").summernote();
+    }(jQuery, this));
+  </script>
 </body>
 </html>
