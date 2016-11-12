@@ -1,0 +1,169 @@
+ <!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Rechenaufgaben</title>
+	<script src="jquery-3.1.1.min.js"></script>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	
+	<style>
+		#aufgabe {
+			font-size: 3em;
+		}
+	</style>
+</head>
+
+<body>
+
+<div class="container">
+	<h1>Rechenaufgaben</h1>
+	<p id="options">
+		Ich kann schon mit Zahlen bis <input type="text" class="option-bis-max" value="10" size="10"> rechnen.<br />
+		Ich kann schon mit Null <input type="checkbox" class="option-kann-null" checked> umgehen.<br />
+		Ich kann 
+			<label><input type="checkbox" class="option-operator" value="+" checked> Plus (+)</label>
+			<label><input type="checkbox" class="option-operator" value="-"> Minus (-)</label>
+			<label><input type="checkbox" class="option-operator" value="*"> Mal (*)</label>
+			<!--
+			<label><input type="checkbox" class="option-operator" value="/" disabled> Dividiert (/)</label>
+			-->
+			rechnen.
+	</p>
+	<div class="jumbotron">
+		<div class="alert alert-success nachricht nachricht-richtig hidden">SUPER! <span class="rechnung">Das</span> ist richtig!</div>
+		<div class="alert alert-danger nachricht nachricht-falsch hidden">OJE! <span class="rechnung">Das</span> ist leider falsch. Das richitge Ergebnis lautet: <span class="rechnung-ergebnis">?</span></div>
+		<form id="aufgabe">
+			Rechne:
+			<div class="form-control">
+				<span class="zahl-1">?</span>
+				<span class="operator">?</span>
+				<span class="zahl-2 btn">?</span>
+				<span class="istgleich">=</span>
+				<input name="tipp" type="text" size="9" autocomplete="off" class="tipp">
+				<input name="ergebnis" type="hidden" class="ergebnis">
+
+				<button type="submit">OK</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function() {
+		
+		var $options = $("#options");
+		var $form = $("#aufgabe");
+		var $zahl1 = $(".zahl-1", $form);
+		var $zahl2 = $(".zahl-2", $form);
+		var $operator = $(".operator", $form);
+		var $ergebnis = $(".ergebnis", $form);
+		var $tipp = $(".tipp", $form);
+		
+		var getOptions = function() {
+				var data = {};
+				var index, batch;
+				var max_num;
+				
+				// fill operators
+				data.operators = [];
+				$(".option-operator", $options).each(function() {
+						var $this = $(this);
+						if ($this.is(":checked"))
+						{
+							data.operators.push($this.val());
+						}
+					});
+				
+				// fill numbers
+				max_num = parseInt($(".option-bis-max", $options).val(), 10);
+				
+				data.numbers = [];
+				
+				if ($(".option-kann-null", $options).is(":checked"))
+				{
+					data.numbers.push(0);
+				}
+				for (batch = 0; batch < 10; batch++)
+				{
+					for (index = 1; index <= max_num; index++)
+					{
+						data.numbers.push(index);
+					}
+				}
+				
+				return data;
+			};
+		
+		var selectRandom = function(a_data) {
+				return a_data[Math.floor(Math.random() * a_data.length)];
+			};
+
+		var validateData = function(data, options) {
+				var temp = 0;
+				switch(data.operator)
+				{
+				case "-":
+					if (data.zahl1 < data.zahl2) {
+						// tausche zahlen
+						temp = data.zahl1;
+						data.zahl1 = data.zahl2;
+						data.zahl2 = temp;
+					}
+					break;
+				}
+				
+				return data;
+			};
+
+		var setAufgabe = function() {
+				var options = getOptions();
+				var data = validateData({
+						zahl1: selectRandom(options.numbers),
+						zahl2: selectRandom(options.numbers), 
+						operator: selectRandom(options.operators)
+					}, options);
+				
+				var str_rechnung = "" + data.zahl1 + " " + data.operator + " " + data.zahl2
+				var ergebnis = parseInt(eval(str_rechnung), 10);
+				
+				$zahl1.text(data.zahl1);
+				$zahl2.text(data.zahl2);
+				$operator.text(data.operator);
+				$ergebnis.val(ergebnis);
+				$tipp.val('');
+				
+				$form.off("submit").on("submit", function(event) {
+						var tipp = parseInt($tipp.val(), 10);
+						var str_gesamt = "'" + str_rechnung + " = " + tipp + "'";
+						
+						event.preventDefault();
+						
+						$(".nachricht .rechnung").text(str_gesamt);
+						$(".nachricht .rechnung-ergebnis").text(ergebnis);
+						if (tipp === ergebnis)
+						{
+							$(".nachricht-richtig").show();
+							$(".nachricht-falsch").hide();
+						}
+						else
+						{
+							$(".nachricht-richtig").hide();
+							$(".nachricht-falsch").show();
+						}
+		
+						setAufgabe();
+					});
+
+			};
+		
+		setAufgabe();
+		
+		$(".nachricht").hide().removeClass("hidden");
+		
+		$("#options :input").change(function() { setAufgabe(); });
+	});
+</script>
+
+</body>
+
+</html> 
