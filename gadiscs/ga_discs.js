@@ -1,6 +1,6 @@
 (function($, window){
 
-	var LOOP_MULTIPLIER = 100;
+	var LOOP_MULTIPLIER = 10;
 	var POPULATION = 32;
 	var CROSSOVER_RATE = 0.8;
 	var MUTATION_RATE = 0.05;
@@ -98,7 +98,7 @@
 		
 		_this.add = function(disc)
 		{
-			_this.discs.push(disc)
+			_this.discs.push(disc);
 		};
 	
 		_this.overlaps = function(check_disc)
@@ -191,7 +191,7 @@
 			var size = parseInt(fsize * _this.height);
 		
 			return new Disc(x, y, size);
-		}
+		};
 	
 	
 		_this.setupGa = function()
@@ -215,14 +215,14 @@
 					}
 				});
 			
-			ga.add(function() { return rndBit(); }, 4);
-		}
+			ga.add(function() { return rndBit(); }, POPULATION);
+		};
 		
 		_this.update = function()
 		{
 			var index;
 			
-			_this.ga_.add(function() { return rndBit(); });
+//			_this.ga_.add(function() { return rndBit(); });
 
 			for(index = 0; index < LOOP_MULTIPLIER; index++)
 			{
@@ -231,7 +231,7 @@
 			_this.draw();
 			_this.drawGa();
 			
-			$("#info").text("gen: " + _this.ga_.getGenerations() + "; pop: " + _this.ga_.pool_.length);
+			$("#info").text("gen: " + _this.ga_.getGenerations() + "; pop: " + _this.ga_.pool_.length + " / " + POPULATION);
 		};
 		
 		_this.drawGa = function()
