@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>GA discs</title>
+	<script src="jquery-3.1.1.min.js"></script>
+	<script src="ga_lib.js"></script>
+	<script src="ga_discs.js"></script>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	
+	<style>
+		#screen {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+
+<body>
+
+<div class="container">
+	<h1>GA disc optimizer test</h1>
+	<div class="jumbotron">
+		<canvas id="screen" width="600" height="400"></canvas>
+	</div>
+	<p>
+		<button id="reset">reset</button>
+		<button id="runTest">run...</button>
+		<button id="stopTest" style="display:none;">stop...</button>
+		<span class="label label-info"><span id="info"></span></span>
+	</p>
+</div>
+
+<script>
+	$(function() {
+		var $screen = $('#screen').gadiscs({
+				numDiscs: 30
+			});
+		var $runTest = $('#runTest');
+		var $stopTest = $('#stopTest');
+		
+		$('#reset').click(function() {
+				$screen.gadiscs('reset');
+			});
+		
+		$runTest.click(function() {
+				$runTest.hide();
+				$stopTest.show();
+				
+				console.log("start", new Date());
+				$screen.gadiscs('runTest');
+			});
+		
+		$stopTest.click(function() {
+				$stopTest.hide();
+				$runTest.show();
+				
+				console.log("stop", new Date());
+				$screen.gadiscs('stopTest');
+			});
+		
+	});
+</script>
+
+</body>
+
+</html>
