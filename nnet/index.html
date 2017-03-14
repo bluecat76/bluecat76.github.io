@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>NN mines</title>
+	<!-- script src="https://code.jquery.com/jquery-3.1.1.min.js"></script -->
+	<script src="jquery-3.1.1.min.js"></script>
+	<script src="ga_lib.js"></script>
+	<script src="nn_lib.js"></script>
+	<script src="nn_mines.js"></script>
+	<!-- link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" -->
+	<link rel="stylesheet" href="bootstrap-3.3.7.min.css">
+	
+	<style>
+		#screen {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+
+<body>
+
+<div class="container">
+	<h1>NN mines test</h1>
+	<div class="jumbotron">
+		<canvas id="screen" width="600" height="400"></canvas>
+	</div>
+	<p>
+		<button id="reset">reset</button>
+		<button id="runTest">run...</button>
+		<button id="stopTest" style="display:none;">stop...</button>
+		<span class="label label-info"><span id="info"></span></span>
+	</p>
+</div>
+
+<script>
+	$(function() {
+		var $screen = $('#screen').nnmines({
+				numMines: 30
+			});
+		var $runTest = $('#runTest');
+		var $stopTest = $('#stopTest');
+		
+		$('#reset').click(function() {
+				$screen.nnmines('reset');
+			});
+		
+		$runTest.click(function() {
+				$runTest.hide();
+				$stopTest.show();
+				
+				console.log("start", new Date());
+				$screen.nnmines('runTest');
+			});
+		
+		$stopTest.click(function() {
+				$stopTest.hide();
+				$runTest.show();
+				
+				console.log("stop", new Date());
+				$screen.nnmines('stopTest');
+			});
+		
+	});
+</script>
+
+</body>
+
+</html>
