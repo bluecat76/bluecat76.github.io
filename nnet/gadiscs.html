@@ -3,10 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>GA discs</title>
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="ga_lib.js"></script>
-	<script src="ga_discs.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="lib/require.min.js"></script>
+	<link rel="stylesheet" href="lib/bootstrap-3.3.7.min.css">
 	
 	<style>
 		#screen {
@@ -31,6 +29,17 @@
 </div>
 
 <script>
+requirejs.config({
+  baseUrl: 'lib',
+
+  paths: {
+			jquery: 'jquery-3.1.1.min'
+		}
+
+	});
+
+require(['jquery', 'gadiscs/gadiscs.plugin'], function ($) {
+		
 	$(function() {
 		var $screen = $('#screen').gadiscs({
 				numDiscs: 30
@@ -59,6 +68,8 @@
 			});
 		
 	});
+	
+});
 </script>
 
 </body>

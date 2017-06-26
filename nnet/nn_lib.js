@@ -84,7 +84,7 @@ $(document).ready(function() {
 		var _this = this;
 	
 		_this.length_ = num_neurons;
-		_this.neurons_ = [];
+		_this.randomize();
 	
 		_this.getLength = function()
 		{
@@ -106,6 +106,7 @@ $(document).ready(function() {
 			var index;
 			var neuron;
 		
+			_this.neurons_ = [];
 			for (index = 0; index < _this.length_; index++)
 			{
 				neuron = new Neuron(num_inputs);
@@ -122,11 +123,6 @@ $(document).ready(function() {
 	}
 	
 	
-	function NeuralNet()
-	{
-	}
-	
-
 	$.nnlib = {
 		defaults: {
 			numInputs: 4,
@@ -136,7 +132,7 @@ $(document).ready(function() {
 			activationFunction: function(input) { return 0; } // should return float between 0..1
 		},
 	
-		Nn: function(options_in)
+		NeuralNet: function(options_in)
 		{
 			var _this = this;
 			var _options = $.extend({}, $.nnlib.defaults, options_in);

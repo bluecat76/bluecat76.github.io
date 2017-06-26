@@ -32,6 +32,12 @@
 	}
 	
 
+	function fncSigmoid(input, response)
+	{
+		return (1 / (1 + Math.exp(-input / response)));
+	}
+	
+
 	function Mine(x, y, size)
 	{
 		var _this = this;
@@ -108,6 +114,18 @@
 		_this.direction = dir.clone(); // pointer
 		_this.look_at = dir.clone(); // pointer
 		_this.size = TANK_SIZE;
+		
+		
+		_this.setupNN = function()
+		{
+			var nnet = _this.nn_ = new $.nnlib.NeuralNet({
+					numInputs: 4,
+					numOutputs: 2,
+					numHiddenLayers: 1,
+					numNeuronsPerLayer: 6,
+					activationFunction: fncSigmoid
+				});
+		};
 	}
 	
 	
@@ -249,7 +267,6 @@
 		{
 			_this.map_.prepare(_options.numMines, _options.numTanks);
 			_this.draw();
-			_this.setupNn();
 		};
 		
 		_this.draw = function()
@@ -310,10 +327,8 @@
 		};
 		
 		
-		_this.setupNn = function()
+		_this.setupGa = function()
 		{
-			// TODO: setup the NN!
-/*
 			var ga = _this.ga_ = new $.galib.Ga({
 				maxPopulation: POPULATION,
 				crossoverRate: CROSSOVER_RATE,
@@ -334,8 +349,7 @@
 				});
 			
 			ga.add(function() { return rndBit(); }, POPULATION);
-*/
-		};
+		}
 		
 		_this.update = function()
 		{
@@ -344,7 +358,7 @@
 			for(index = 0; index < LOOP_MULTIPLIER; index++)
 			{
 				// TODO: update NN
-				// _this.nn_.cycle();
+				_this.nn_.cycle();
 			}
 			_this.updateObjects();
 			_this.draw();

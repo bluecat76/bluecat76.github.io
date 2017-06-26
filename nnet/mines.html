@@ -2,14 +2,9 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>NN mines</title>
-	<!-- script src="https://code.jquery.com/jquery-3.1.1.min.js"></script -->
-	<script src="jquery-3.1.1.min.js"></script>
-	<script src="ga_lib.js"></script>
-	<script src="nn_lib.js"></script>
-	<script src="nn_mines.js"></script>
-	<!-- link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" -->
-	<link rel="stylesheet" href="bootstrap-3.3.7.min.css">
+	<title>NNet Mines Test</title>
+	<script src="lib/require.min.js"></script>
+	<link rel="stylesheet" href="lib/bootstrap-3.3.7.min.css">
 	
 	<style>
 		#screen {
@@ -21,7 +16,7 @@
 <body>
 
 <div class="container">
-	<h1>NN mines test</h1>
+	<h1>NN Mines Test</h1>
 	<div class="jumbotron">
 		<canvas id="screen" width="600" height="400"></canvas>
 	</div>
@@ -34,9 +29,21 @@
 </div>
 
 <script>
+requirejs.config({
+  baseUrl: 'lib',
+
+  paths: {
+			jquery: 'jquery-3.1.1.min'
+		}
+
+	});
+
+require(['jquery', 'nnmines/nnmines.plugin'], function ($) {
+		
 	$(function() {
 		var $screen = $('#screen').nnmines({
-				numMines: 30
+				numMines: 30,
+				numTanks: 1
 			});
 		var $runTest = $('#runTest');
 		var $stopTest = $('#stopTest');
@@ -62,6 +69,8 @@
 			});
 		
 	});
+	
+});
 </script>
 
 </body>

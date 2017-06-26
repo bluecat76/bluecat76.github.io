@@ -1,93 +1,27 @@
-$(document).ready(function() {
+define(['common/mathEx', 'ga/genome'], function (mathEx, Genome) {
 
-	function rndInt(max)
-	{
-		return parseInt(Math.random() * max);
-	}
-	
-	function rndBit()
-	{
-		return (Math.random() > 0.5);
-	}
-	
-	function Genome(length, fitness_function)
-	{
-		var _this = this;
-	
-		_this.length_ = length;
-		_this.dna_ = [];
-		_this.apply_fitness_ = fitness_function;
-		_this.fitness_ = undefined; // must be applied by outside after fill...
-	
-		_this.getLength = function()
-		{
-			return _this.length;
-		};
-	
-		_this.getDna = function()
-		{
-			return _this.dna_.slice(0);
-		};
-	
-		_this.getGene = function(index)
-		{
-			return _this.dna_[index];
-		};
-	
-		_this.getFitness = function()
-		{
-			if (_this.fitness_ === undefined)
-			{
-				// must apply fitness to cache it...
-				if(_this.dna_.length == _this.length_ && _this.apply_fitness_)
-				{
-					_this.fitness_ = _this.apply_fitness_(_this);
-				}
-			}
-		
-			return _this.fitness_;
-		};
-	
-		_this.fill = function(fill_func)
-		{
-			var index;
-			var value;
-		
-			for (index = 0; index < _this.length_; index++)
-			{
-				value = fill_func ? (fill_func() ? 1 : 0) : 0;
-				_this.dna_.push(value);
-			}
-		};
-		
-		_this.randomize = function()
-		{
-			_this.fill(rndBit);
-		};
-	
-	}
-
-
-
-	$.galib = {
-		defaults: {
+	var defaults = {
 			genomeLength: 20,
 			maxPopulation: 32,
 			crossoverRate: 0.7,
 			mutationRate: 0.001,
-			fitnessFunction: function(genome) { return 0; } // should return float between 0..1
-		},
-	
-		Ga: function(options_in)
-		{
+			maxPerturbation: 0.3,
+			fitnessFunction: function(genome) { return 0; }, // should return float between 0..1
+			fillFunc: function() { return 0; } // return what suits the Genome's need
+		};
+
+	var GeneticAlgorithm = function(options_in)
+	{
 			var _this = this;
-			var _options = $.extend({}, $.galib.defaults, options_in);
+			var _options = $.extend({}, defaults, options_in);
 	
 			_this.genome_length_ = _options.genomeLength;
 			_this.max_population_ = _options.maxPopulation;
 			_this.crossover_rate_ = _options.crossoverRate;
 			_this.mutation_rate_ = _options.mutationRate;
+			_this.max_perturbation_ = _options.maxPerturbation;
 			_this.fitness_func_ = _options.fitnessFunction;
+			_this.fill_func_ = _options.fillFunc;
 			_this.generations_ = 0;
 		
 			_this.pool_ = [];
@@ -165,8 +99,14 @@ $(document).ready(function() {
 			
 				return _this.pool_.slice(0, max);
 			};
+			
+			_this.initPool = function(new_elements)
+			{
+				_this.pool_ = [];
+				_this.pool_.push(new_elements);
+			};
 		
-			_this.add = function(fill_func, optional_num)
+			_this.add = function(optional_num)
 			{
 				var num = optional_num || 1;
 				var genome;
@@ -174,30 +114,39 @@ $(document).ready(function() {
 				while (num--)
 				{
 					genome = new Genome(_this.genome_length_, _this.fitness_func_);
-					genome.fill(fill_func);
+					genome.fill(_this.fill_func_);
+					
+					_this.addGenome(genome);
 				
+				}
+			};
+		
+			_this.mutate = function(chromosome)
+			{
+				if(Math.random() < _this.mutation_rate)
+				{
+					// slightly modify the value
+					return (chromosome + mathEx.rndClamped() * _this.max_perturbation_);
+				}
+				return chromosome;
+			};
+		
+			_this.getMutatedGenome = function(dna)
+			{
+				var index = 0;
+				var genome = new Genome(_this.genome_length_, _this.fitness_func_);
+
+				genome.fill(function() { return _this.mutate(dna[index++]); });
+				
+				return genome;
+			};
+			
+			_this.addGenome = function(genome)
+			{
 					if (!_this.contains(genome))
 					{
 						_this.pool_.push(genome);
 					}
-				}
-			};
-		
-			_this.mutate = function(bit)
-			{
-				if(Math.random() < _this.mutation_rate)
-				{
-					// flip the bit
-					return (bit ? 0 : 1);
-				}
-				return bit;
-			};
-		
-			_this.addGenome = function(dna)
-			{
-				var index = 0;
-			
-				_this.add(function() { return _this.mutate(dna[index++]); });
 			};
 		
 			_this.combine = function(genome_a, genome_b)
@@ -212,22 +161,22 @@ $(document).ready(function() {
 				if (Math.random() > _this.crossover_rate_)
 				{
 					// return (possibly mutated) parents
-					_this.addGenome(parent_a);
-					_this.addGenome(parent_b);
+					_this.addGenome(_this.getMutatedGenome(parent_a));
+					_this.addGenome(_this.getMutatedGenome(parent_b));
 				
 					return;
 				}
 			
 				// make children
-				cut_point = rndInt(_this.genome_length_);
+				cut_point = mathEx.rndInt(_this.genome_length_);
 			
 				Array.prototype.push.apply(child_a, parent_a.slice(0, cut_point-1));
 				Array.prototype.push.apply(child_a, parent_b.slice(cut_point));
-				_this.addGenome(child_a);
+				_this.addGenome(_this.getMutatedGenome(child_a));
 			
 				Array.prototype.push.apply(child_b, parent_b.slice(0, cut_point-1));
 				Array.prototype.push.apply(child_b, parent_a.slice(cut_point));
-				_this.addGenome(child_b);
+				_this.addGenome(_this.getMutatedGenome(child_b));
 			};
 		
 			_this.selectByPopularity = function(pool)
@@ -256,7 +205,7 @@ $(document).ready(function() {
 						});
 			
 					// select one by random
-					select_index = roulette[rndInt(roulette.length)];
+					select_index = roulette[mathEx.rndInt(roulette.length)];
 /*
 					$.each(pool, function(pool_index, i_genome) {
 							sum_probabilities += i_genome.getFitness();
@@ -272,7 +221,7 @@ $(document).ready(function() {
 			
 				if (select_index < 0)
 				{
-					select_index = rndInt(pool.length);
+					select_index = mathEx.rndInt(pool.length);
 				}
 			
 //				return pool[select_index];
@@ -281,32 +230,38 @@ $(document).ready(function() {
 		
 			_this.cycle = function()
 			{
-				// produce the next generation of the population
+				// produce the next generation of the population (keep the better half of the pool)
 				var pool = _this.getBest(_this.pool_.length >> 1);
 				var index;
 				var genome;
 			
 				_this.generations_ += 1;
-			
-				// add random members
+				
+				// add random members to the temporary pool
 				for (index = pool.length; index < _this.max_population_; index++)
 				{
 					genome = new Genome(_this.genome_length_, _this.fitness_func_);
-					genome.randomize();
+					// randomize genome
+					genome.fill(_this.fill_func_);
 					
 					pool.push(genome);
 				}
-			
+				
+				// fill the pool again by comnination
 				for (index = 0; index < pool.length; index += 2)
 				{
 					_this.combine(_this.selectByPopularity(pool), _this.selectByPopularity(pool));
 				}
-
+				
+				// reduce population, keeping the fittest
 				_this.checkPopulation();
 			};
 		
-		}
-
+	};
+	
+	return {
+		defaults: defaults,
+		GeneticAlgorithm : GeneticAlgorithm
 	};
 	
 });
