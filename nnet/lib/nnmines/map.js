@@ -149,6 +149,9 @@ define(['common/mathEx'], function (mathEx) {
 				{
 					console.log("mine collected", _this, mines_collected[index]);
 					_this.minesCollected += mines_collected[index].size;
+					
+					// add a new mine for each one found
+					map.addMine();
 				}
 			};
 			
