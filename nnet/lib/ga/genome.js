@@ -19,9 +19,13 @@ define(function () {
 			return _this.dna_.slice(0);
 		};
 	
-		_this.getGene = function(index)
+		_this.setDna = function(dna)
 		{
-			return _this.dna_[index];
+			var index;
+			for(index = 0; index < _this.length_; index++)
+			{
+				_this.dna_[index] = dna[index];
+			}
 		};
 	
 		_this.getFitness = function()

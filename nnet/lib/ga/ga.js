@@ -64,10 +64,12 @@ define(['common/mathEx', 'ga/genome'], function (mathEx, Genome) {
 			_this.equals = function(genome_a, genome_b)
 			{
 				var index;
+				var dna_a = genome_a.getDna();
+				var dna_b = genome_b.getDna();
 			
 				for (index = 0; index < _this.genome_length_; index++)
 				{
-					if(genome_a.getGene(index) != genome_b.getGene(index))
+					if(dna_a[index] != dna_b[index])
 					{
 						return false;
 					}
